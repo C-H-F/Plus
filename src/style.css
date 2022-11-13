@@ -4,12 +4,13 @@ html {
 body {
   min-width: 100vw;
   min-height: 100vh;
-  background-color: blue;
+  background-color: gray;
   margin: 0px;
   box-sizing: border-box;
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: background-color 1s;
 }
 @media screen and (max-height: 400px) {
   body {
@@ -31,12 +32,6 @@ body {
   border-radius: 100%;
   background-color: green;
   display: inline-block;
-}
-#app {
-  display: none;
-  flex-direction: column;
-  align-content: center;
-  align-items: center;
 }
 @keyframes shake {
   0% {
@@ -89,12 +84,20 @@ body {
   background-color: white;
   border-radius: 10%;
 }
-#app button {
-  font-size: 3em;
-  width: 4rem;
-  height: 4rem;
-  margin: 1rem;
+#app {
+  display: none;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  > button {color: green;}
 }
+#app button {
+    font-size: 3em;
+    width: 4rem;
+    height: 4rem;
+    margin: 1rem;
+  }
+
 #numpad {
   display: block;
   justify-content: space-evenly;

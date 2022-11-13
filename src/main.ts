@@ -38,14 +38,17 @@ const ui = {
   numpad: document.querySelector<HTMLDivElement>('#numpad')!,
   progress: document.querySelector<HTMLProgressElement>('#app progress')!,
 };
-
+function getRandomHex(rng: MersenneTwister | null = null): string{
+  let rand = rng ? rng.random() : Math.random();
+  return Math.floor(rand * 0x10).toString(16);
+}
 function makeFirework() {
   const colors: string[] = [];
   const colorCount = 1 + Math.random() * 10;
   for (let i = 0; i < colorCount; i++) {
     let color = '#';
     for (let i = 0; i < 6; i++) {
-      color += Math.floor(Math.random() * 0x10).toString(16);
+      color += getRandomHex();
     }
     colors.push(color);
   }
@@ -100,6 +103,7 @@ function start() {
 
   let currStat: Stat;
   const generateCalc = () => {
+    document.querySelector<HTMLBodyElement>('body')!.style.backgroundColor = '#' + Math.floor(Math.random() * 0x50 + 0x50).toString(16)+ Math.floor(Math.random() * 0x50 + 0x50).toString(16)+ Math.floor(Math.random() * 0x50 + 0x50).toString(16);
     const c = generateRandom(min + 1, max); //there are at least 2 numbers
     const a = generateRandom(min, c - config.numberSpaceMin);
     const b = c - a;
