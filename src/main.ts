@@ -39,17 +39,6 @@ const ui = {
   progress: document.querySelector<HTMLProgressElement>('#app progress')!,
 };
 
-window.addEventListener('hashchange', () => {
-  let data = window.location.hash;
-  if (data) decodeURIComponent(data.substring(1));
-  if (data) {
-    start();
-  } else {
-    ui.app.style.display = 'none';
-    ui.menu.style.display = '';
-  }
-});
-
 function makeFirework() {
   const colors: string[] = [];
   const colorCount = 1 + Math.random() * 10;
@@ -281,3 +270,21 @@ for (const input of menuInputs) {
 ui.submit.addEventListener('click', () => {
   location.href = '#' + JSON.stringify(config);
 });
+
+function onHashChange() {
+  let data = window.location.hash;
+  if (data) data = decodeURIComponent(data.substring(1));
+  if (data) {
+    try{
+      const tmp = JSON.parse(data);
+      Object.assign(config, tmp);
+    }catch{}
+    start();
+  } else {
+    ui.app.style.display = 'none';
+    ui.menu.style.display = '';
+  }
+}
+window.addEventListener('hashchange', onHashChange);
+if(window.location.hash?.length > 1)
+  onHashChange();
