@@ -163,7 +163,7 @@ function start() {
           }
         }
         if (config.mode === 'amount') ui.progress.value = stat.length;
-        if (stat.length == config.amount) finish(stat);
+        if (config.mode === 'amount' && stat.length == config.amount) finish(stat);
       } else {
         currStat.incorrect.push(val);
         buttons.forEach((x) => (x.disabled = true));
