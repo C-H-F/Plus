@@ -136,7 +136,7 @@ function start() {
     }
   };
   const buttons: HTMLButtonElement[] = [];
-  for (let i = 0; i < config.numberSpace + 1; i++) {
+  for (let i = config.numberSpaceMin; i < config.numberSpace + 1; i++) {
     const btn = document.createElement('button');
     buttons.push(btn);
     const val = i;
