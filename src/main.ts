@@ -76,7 +76,7 @@ function start() {
 
   const rng = new MersenneTwister(config.seed);
   const min = config.numberSpaceMin;
-  const max = config.numberSpace;
+  const max = config.numberSpace + 1;
 
   if (config.mode === 'amount') {
     ui.progress.max = config.amount;
@@ -132,7 +132,7 @@ function start() {
     }
   };
   const buttons: HTMLButtonElement[] = [];
-  for (let i = 0; i < config.numberSpace; i++) {
+  for (let i = 0; i < config.numberSpace + 1; i++) {
     const btn = document.createElement('button');
     buttons.push(btn);
     const val = i;
