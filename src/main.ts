@@ -75,7 +75,7 @@ function start() {
   const stat: Stat[] = [];
 
   const rng = new MersenneTwister(config.seed);
-  const min = config.includeZero ? 0 : 1;
+  const min = config.numberSpaceMin;
   const max = config.numberSpace;
 
   if (config.mode === 'amount') {
@@ -101,7 +101,7 @@ function start() {
   let currStat: Stat;
   const generateCalc = () => {
     const c = generateRandom(min + 1, max); //there are at least 2 numbers
-    const a = generateRandom(min, config.includeZero ? c : c - 1);
+    const a = generateRandom(min, c - config.numberSpaceMin);
     const b = c - a;
     const hole = generateRandom(0, 3);
     ui.op.innerText = '+';
@@ -171,7 +171,7 @@ function start() {
 
 type Config = {
   numberSpace: number;
-  includeZero: boolean;
+  numberSpaceMin: number;
   mode: 'time' | 'amount';
   time: number;
   amount: number;
@@ -180,7 +180,7 @@ type Config = {
 
 const config: Config = {
   numberSpace: 10,
-  includeZero: true,
+  numberSpaceMin: 0,
   mode: 'time',
   amount: 10,
   time: 1,
@@ -196,7 +196,7 @@ function updateConfig(input: HTMLInputElement | null = null) {
     if ([ui.sldNumberSpace, ui.txtNumberSpace].indexOf(input) >= 0)
       config.numberSpace = +input.value;
     else if ([ui.ckbIncludeZero].indexOf(input) >= 0)
-      config.includeZero = input.checked;
+      config.numberSpaceMin = input.checked ? 0 : 1;
     else if ([ui.sldTime, ui.txtTime].indexOf(input) >= 0)
       config.time = +input.value;
     else if ([ui.sldAmount, ui.txtAmount].indexOf(input) >= 0)
@@ -219,8 +219,8 @@ function updateConfig(input: HTMLInputElement | null = null) {
     ui.sldNumberSpace.value = config.numberSpace + '';
   if (ui.txtNumberSpace.value !== config.numberSpace + '')
     ui.txtNumberSpace.value = config.numberSpace + '';
-  if (ui.ckbIncludeZero.checked !== config.includeZero)
-    ui.ckbIncludeZero.checked = config.includeZero;
+  if (ui.ckbIncludeZero.checked !== (config.numberSpaceMin === 0))
+    ui.ckbIncludeZero.checked = (config.numberSpaceMin === 0);
   if (config.mode === 'amount') {
     ui.rbAmount.checked = true;
     ui.rbTime.checked = false;
