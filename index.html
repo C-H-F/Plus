@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PLUS</title>
+  </head>
+  <body>
+    <div id="menu">
+      <div>
+        <label for="txtNumberSpace">Zahlenraum:</label>
+        <input type="range" min="2" max="100" value="10" id="sldNumberSpace" />
+        <input type="number" min="2" max="100" value="10" id="txtNumberSpace" />
+        <div id="numberSpaceDisplay"></div>
+      </div>
+      <div>
+        <input type="checkbox" id="ckbIncludeZero" />
+        <label for="ckbIncludeZero">Inklusive 0</label>
+      </div>
+      <div>
+        <input type="radio" id="rbTime" name="mode" value="time" />
+        <label for="rbTime">Spiel auf Zeit</label>
+      </div>
+      <div id="timeData">
+        <input type="range" min="1" max="60" value="1" id="sldTime" />
+        <div id="timeDisplay">
+          <input type="text" min="1" max="60" value="1" id="txtTime" />
+          <span>min</span>
+        </div>
+      </div>
+      <div>
+        <input type="radio" id="rbAmount" name="mode" value="amount" />
+        <label for="rbAmount">Spiel auf Menge</label>
+      </div>
+      <div id="amountData">
+        <label for="txtAmount">Anzahl:</label>
+        <input id="sldAmount" min="1" max="10000" value="100" type="range" />
+        <input id="txtAmount" min="1" max="10000" value="100" type="number" />
+      </div>
+      <div id="qr"><canvas></canvas></div>
+      <button id="submit">Los gehts</button>
+    </div>
+    <div id="app">
+      <div>
+        <span id="a"></span>
+        <span id="op"></span>
+        <span id="b"></span>
+        <span id="eq">=</span>
+        <span id="c"></span>
+      </div>
+      <div id="numpad"></div>
+      <progress></progress>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

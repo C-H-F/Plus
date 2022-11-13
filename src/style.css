@@ -1,0 +1,107 @@
+html {
+  font-family: Verdana, Arial, Tahoma, Serif;
+}
+body {
+  min-width: 100vw;
+  min-height: 100vh;
+  background-color: blue;
+  margin: 0px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+@media screen and (max-height: 400px) {
+  body {
+    align-items: flex-start;
+    margin-top: 10vh;
+    margin-bottom: 10vh;
+  }
+}
+#menu {
+  width: min(80%, 400px);
+  background: red;
+  box-sizing: border-box;
+  padding: 30px;
+}
+#numberSpaceDisplay > span {
+  width: 10px;
+  height: 10px;
+  margin: 2px;
+  border-radius: 100%;
+  background-color: green;
+  display: inline-block;
+}
+#app {
+  display: none;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+}
+@keyframes shake {
+  0% {
+    transform: translateX(0px);
+  }
+  10% {
+    transform: translateX(-10%);
+  }
+  20% {
+    transform: translateX(+10%);
+  }
+  30% {
+    transform: translateX(-10%);
+  }
+  40% {
+    transform: translateX(10%);
+  }
+  50% {
+    transform: translateX(-10%);
+  }
+  60% {
+    transform: translateX(10%);
+  }
+  70% {
+    transform: translateX(-10%);
+  }
+  80% {
+    transform: translateX(10%);
+  }
+  90% {
+    transform: translateX(-10%);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+#a,
+#b,
+#c,
+#op,
+#eq {
+  display: inline-flex;
+  font-size: 3em;
+  width: 5rem;
+  height: 5rem;
+  align-items: center;
+  justify-content: center;
+}
+.hole {
+  background-color: white;
+  border-radius: 10%;
+}
+#app button {
+  font-size: 3em;
+  width: 4rem;
+  height: 4rem;
+  margin: 1rem;
+}
+#numpad {
+  display: block;
+  justify-content: space-evenly;
+  width: 100%;
+  margin-top: 3rem;
+  text-align: center;
+}
+.incorrect {
+  animation: 1s shake;
+}
