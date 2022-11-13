@@ -16,7 +16,7 @@ jobs:
       - name: Checkout branch release
         uses: actions/checkout@v3
       - name: Build
-        run: npm ci && npm run build
+        run: npm ci && npm run build-ci
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: Upload artifact
