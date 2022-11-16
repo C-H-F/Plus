@@ -20,6 +20,10 @@ const ui = {
     '#numberSpaceDisplay'
   )!,
   ckbIncludeZero: document.querySelector<HTMLInputElement>('#ckbIncludeZero')!,
+  ckbAdd: document.querySelector<HTMLInputElement>('#ckbAdd')!,
+  ckbSubtract: document.querySelector<HTMLInputElement>('#ckbSubtract')!,
+  ckbMultiply: document.querySelector<HTMLInputElement>('#ckbMultiply')!,
+  ckbDivide: document.querySelector<HTMLInputElement>('#ckbDivide')!,
   rbTime: document.querySelector<HTMLInputElement>('#rbTime')!,
   timeData: document.querySelector<HTMLDivElement>('#timeData')!,
   sldTime: document.querySelector<HTMLInputElement>('#sldTime')!,
@@ -38,7 +42,11 @@ const ui = {
   numpad: document.querySelector<HTMLDivElement>('#numpad')!,
   progress: document.querySelector<HTMLProgressElement>('#app progress')!,
 };
-function getRandomHex(rng: MersenneTwister | null = null): string{
+(ui.ckbMultiply.parentElement as HTMLDivElement).style.display = 'none';
+(ui.ckbDivide.parentElement as HTMLDivElement).style.display = 'none';
+(ui.ckbSubtract.parentElement as HTMLDivElement).style.display = 'none';
+
+function getRandomHex(rng: MersenneTwister | null = null): string {
   let rand = rng ? rng.random() : Math.random();
   return Math.floor(rand * 0x10).toString(16);
 }
@@ -103,7 +111,11 @@ function start() {
 
   let currStat: Stat;
   const generateCalc = () => {
-    document.querySelector<HTMLBodyElement>('body')!.style.backgroundColor = '#' + Math.floor(Math.random() * 0x50 + 0x50).toString(16)+ Math.floor(Math.random() * 0x50 + 0x50).toString(16)+ Math.floor(Math.random() * 0x50 + 0x50).toString(16);
+    document.querySelector<HTMLBodyElement>('body')!.style.backgroundColor =
+      '#' +
+      Math.floor(Math.random() * 0x50 + 0x50).toString(16) +
+      Math.floor(Math.random() * 0x50 + 0x50).toString(16) +
+      Math.floor(Math.random() * 0x50 + 0x50).toString(16);
     const c = generateRandom(min + 1, max); //there are at least 2 numbers
     const a = generateRandom(min, c - config.numberSpaceMin);
     const b = c - a;
@@ -156,7 +168,8 @@ function start() {
           }
         }
         if (config.mode === 'amount') ui.progress.value = stat.length;
-        if (config.mode === 'amount' && stat.length == config.amount) finish(stat);
+        if (config.mode === 'amount' && stat.length == config.amount)
+          finish(stat);
       } else {
         currStat.incorrect.push(val);
         buttons.forEach((x) => (x.disabled = true));
@@ -224,7 +237,7 @@ function updateConfig(input: HTMLInputElement | null = null) {
   if (ui.txtNumberSpace.value !== config.numberSpace + '')
     ui.txtNumberSpace.value = config.numberSpace + '';
   if (ui.ckbIncludeZero.checked !== (config.numberSpaceMin === 0))
-    ui.ckbIncludeZero.checked = (config.numberSpaceMin === 0);
+    ui.ckbIncludeZero.checked = config.numberSpaceMin === 0;
   if (config.mode === 'amount') {
     ui.rbAmount.checked = true;
     ui.rbTime.checked = false;
@@ -261,6 +274,10 @@ const menuInputs = [
   ui.rbAmount,
   ui.txtAmount,
   ui.sldAmount,
+  ui.ckbAdd,
+  ui.ckbSubtract,
+  ui.ckbDivide,
+  ui.ckbMultiply,
 ];
 for (const input of menuInputs) {
   const listener = () => {
@@ -279,10 +296,10 @@ function onHashChange() {
   let data = window.location.hash;
   if (data) data = decodeURIComponent(data.substring(1));
   if (data) {
-    try{
+    try {
       const tmp = JSON.parse(data);
       Object.assign(config, tmp);
-    }catch{}
+    } catch {}
     start();
   } else {
     ui.app.style.display = 'none';
@@ -290,5 +307,4 @@ function onHashChange() {
   }
 }
 window.addEventListener('hashchange', onHashChange);
-if(window.location.hash?.length > 1)
-  onHashChange();
+if (window.location.hash?.length > 1) onHashChange();
