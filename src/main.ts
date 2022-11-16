@@ -8,7 +8,7 @@ type Stat = {
   b: number;
   c: number;
   hole: number;
-  operator: '+';
+  operator: Operator;
   incorrect: number[];
 };
 
@@ -44,7 +44,6 @@ const ui = {
 };
 (ui.ckbMultiply.parentElement as HTMLDivElement).style.display = 'none';
 (ui.ckbDivide.parentElement as HTMLDivElement).style.display = 'none';
-(ui.ckbSubtract.parentElement as HTMLDivElement).style.display = 'none';
 
 function getRandomHex(rng: MersenneTwister | null = null): string {
   let rand = rng ? rng.random() : Math.random();
@@ -67,6 +66,12 @@ function makeFirework() {
   });
 }
 let interval = 0;
+function toOperatorSign(op: Operator): string {
+  if (op === Operator.Subtract) return '-';
+  if (op === Operator.Multiply) return '·';
+  if (op === Operator.Divide) return ':';
+  return '+';
+}
 function start() {
   if (interval !== 0) {
     clearInterval(interval);
@@ -84,7 +89,7 @@ function start() {
   // let incorrectGuesses = 0;
   // let distinctIncorrectGuesses = 0;
   const stat: Stat[] = [];
-
+  if (config.operators === Operator.None) config.operators = Operator.Add;
   const rng = new MersenneTwister(config.seed);
   const min = config.numberSpaceMin;
   const max = config.numberSpace + 1;
@@ -109,6 +114,13 @@ function start() {
     return Math.floor(rng.random() * (maximum - minimum) + minimum);
   };
 
+  const operatorCount = Math.log(Operator.INVALID) / Math.log(2);
+  const operators: Operator[] = [];
+  for (let i = 0; i < operatorCount; i++) {
+    const operator = Math.pow(2, i) as Operator;
+    if ((config.operators & operator) !== Operator.None)
+      operators.push(operator);
+  }
   let currStat: Stat;
   const generateCalc = () => {
     document.querySelector<HTMLBodyElement>('body')!.style.backgroundColor =
@@ -116,18 +128,34 @@ function start() {
       Math.floor(Math.random() * 0x50 + 0x50).toString(16) +
       Math.floor(Math.random() * 0x50 + 0x50).toString(16) +
       Math.floor(Math.random() * 0x50 + 0x50).toString(16);
-    const c = generateRandom(min + 1, max); //there are at least 2 numbers
-    const a = generateRandom(min, c - config.numberSpaceMin);
-    const b = c - a;
+    const operator = operators[generateRandom(0, operators.length)];
+    let a = 0;
+    let b = 0;
+    let c = 0;
     const hole = generateRandom(0, 3);
     ui.op.innerText = '+';
 
+    if (operator === Operator.Subtract) {
+      a = generateRandom(min + 1, max);
+      b = generateRandom(min + 1, max);
+      if (b > a) {
+        const tmp = a;
+        a = b;
+        b = tmp;
+      }
+      c = a - b;
+    } else {
+      //(operator === Operator.Add) {
+      c = generateRandom(min + 1, max); //there are at least 2 numbers
+      a = generateRandom(min, c - config.numberSpaceMin);
+      b = c - a;
+    }
     currStat = {
       a,
       b,
       c,
       hole,
-      operator: '+',
+      operator,
       incorrect: [],
     };
 
@@ -146,6 +174,7 @@ function start() {
       }
       span.classList.toggle('hole', hole == i);
     }
+    ui.op.innerText = toOperatorSign(operator);
   };
   const buttons: HTMLButtonElement[] = [];
   for (let i = config.numberSpaceMin; i < config.numberSpace + 1; i++) {
@@ -185,7 +214,14 @@ function start() {
 
   generateCalc();
 }
-
+enum Operator {
+  None = 0,
+  Add = 1,
+  Subtract = 2,
+  Multiply = 4,
+  Divide = 8,
+  INVALID = 16,
+}
 type Config = {
   numberSpace: number;
   numberSpaceMin: number;
@@ -193,6 +229,7 @@ type Config = {
   time: number;
   amount: number;
   seed: number; //TODO
+  operators: Operator;
 };
 
 const config: Config = {
@@ -202,6 +239,7 @@ const config: Config = {
   amount: 10,
   time: 1,
   seed: new Date().getTime(),
+  operators: Operator.Add,
 };
 updateConfig();
 function finish(stat: Stat[]): void {
@@ -209,6 +247,7 @@ function finish(stat: Stat[]): void {
   console.log('DONE', stat);
 }
 function updateConfig(input: HTMLInputElement | null = null) {
+  const uiOperators = [ui.ckbAdd, ui.ckbSubtract, ui.ckbMultiply, ui.ckbDivide];
   if (input) {
     if ([ui.sldNumberSpace, ui.txtNumberSpace].indexOf(input) >= 0)
       config.numberSpace = +input.value;
@@ -218,7 +257,13 @@ function updateConfig(input: HTMLInputElement | null = null) {
       config.time = +input.value;
     else if ([ui.sldAmount, ui.txtAmount].indexOf(input) >= 0)
       config.amount = +input.value;
-    else if (
+    else if (uiOperators.indexOf(input) >= 0) {
+      let operators = Operator.None;
+      for (let i = 0; i < uiOperators.length; i++) {
+        if (uiOperators[i].checked) operators |= Math.pow(2, i) as Operator;
+      }
+      config.operators = operators;
+    } else if (
       ui.rbTime === input &&
       input.value === 'time' &&
       config.mode !== 'time'
@@ -254,7 +299,11 @@ function updateConfig(input: HTMLInputElement | null = null) {
   if (ui.txtAmount.value !== config.amount + '')
     ui.txtAmount.value = config.amount + '';
   ui.numberSpaceDisplay.innerHTML = '<span></span>'.repeat(config.numberSpace);
-
+  for (let i = 0; i < uiOperators.length; i++) {
+    const op = uiOperators[i];
+    op.checked =
+      (config.operators & (Math.pow(2, i) as Operator)) != Operator.None;
+  }
   QRCode.toCanvas(ui.qr, getUrl());
 }
 function getUrl(): string {
