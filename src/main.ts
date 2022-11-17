@@ -244,6 +244,7 @@ const config: Config = {
 updateConfig();
 function finish(stat: Stat[]): void {
   location.hash = '#';
+  config.seed = new Date().getTime();
   console.log('DONE', stat);
 }
 function updateConfig(input: HTMLInputElement | null = null) {
