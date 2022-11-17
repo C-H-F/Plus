@@ -10,6 +10,8 @@ type Stat = {
   hole: number;
   operator: Operator;
   incorrect: number[];
+  startTime: Date;
+  endTime: Date | null;
 };
 
 const ui = {
@@ -157,6 +159,8 @@ function start() {
       hole,
       operator,
       incorrect: [],
+      startTime: new Date(),
+      endTime: null,
     };
 
     const spans = [ui.a, ui.b, ui.c];
@@ -186,6 +190,7 @@ function start() {
     btn.addEventListener('click', () => {
       if (correctValue == val) {
         gap.classList.remove('incorrect');
+        currStat.endTime = new Date();
         stat.push(currStat);
         generateCalc();
         {
