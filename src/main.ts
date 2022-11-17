@@ -16,12 +16,9 @@ type Stat = {
 
 const ui = {
   menu: document.querySelector<HTMLDivElement>('#menu')!,
-  txtNumberSpace: document.querySelector<HTMLInputElement>('#txtNumberSpace')!,
-  sldNumberSpace: document.querySelector<HTMLInputElement>('#sldNumberSpace')!,
-  numberSpaceDisplay: document.querySelector<HTMLDivElement>(
-    '#numberSpaceDisplay'
-  )!,
-  ckbIncludeZero: document.querySelector<HTMLInputElement>('#ckbIncludeZero')!,
+  numbers: new Array(101)
+    .fill(undefined)
+    .map((_, i) => document.querySelector<HTMLInputElement>('#rb' + i)!),
   ckbAdd: document.querySelector<HTMLInputElement>('#ckbAdd')!,
   ckbSubtract: document.querySelector<HTMLInputElement>('#ckbSubtract')!,
   ckbMultiply: document.querySelector<HTMLInputElement>('#ckbMultiply')!,
@@ -255,11 +252,14 @@ function finish(stat: Stat[]): void {
 function updateConfig(input: HTMLInputElement | null = null) {
   const uiOperators = [ui.ckbAdd, ui.ckbSubtract, ui.ckbMultiply, ui.ckbDivide];
   if (input) {
-    if ([ui.sldNumberSpace, ui.txtNumberSpace].indexOf(input) >= 0)
-      config.numberSpace = +input.value;
-    else if ([ui.ckbIncludeZero].indexOf(input) >= 0)
-      config.numberSpaceMin = input.checked ? 0 : 1;
-    else if ([ui.sldTime, ui.txtTime].indexOf(input) >= 0)
+    if ((input.checked && input.name === 'start') || input.name === 'end') {
+      const number = ui.numbers.indexOf(input);
+      if (number >= 0) {
+        if (input.name === 'start') config.numberSpaceMin = number;
+        else config.numberSpace = number;
+      }
+    }
+    if ([ui.sldTime, ui.txtTime].indexOf(input) >= 0)
       config.time = +input.value;
     else if ([ui.sldAmount, ui.txtAmount].indexOf(input) >= 0)
       config.amount = +input.value;
@@ -283,12 +283,6 @@ function updateConfig(input: HTMLInputElement | null = null) {
       config.mode = 'amount';
   }
 
-  if (ui.sldNumberSpace.value !== config.numberSpace + '')
-    ui.sldNumberSpace.value = config.numberSpace + '';
-  if (ui.txtNumberSpace.value !== config.numberSpace + '')
-    ui.txtNumberSpace.value = config.numberSpace + '';
-  if (ui.ckbIncludeZero.checked !== (config.numberSpaceMin === 0))
-    ui.ckbIncludeZero.checked = config.numberSpaceMin === 0;
   if (config.mode === 'amount') {
     ui.rbAmount.checked = true;
     ui.rbTime.checked = false;
@@ -304,7 +298,10 @@ function updateConfig(input: HTMLInputElement | null = null) {
     ui.sldAmount.value = config.amount + '';
   if (ui.txtAmount.value !== config.amount + '')
     ui.txtAmount.value = config.amount + '';
-  ui.numberSpaceDisplay.innerHTML = '<span></span>'.repeat(config.numberSpace);
+  ui.numbers.map(
+    (v, i) =>
+      (v.checked = i === config.numberSpaceMin || i === config.numberSpace)
+  );
   for (let i = 0; i < uiOperators.length; i++) {
     const op = uiOperators[i];
     op.checked =
@@ -320,9 +317,7 @@ function getUrl(): string {
 }
 
 const menuInputs = [
-  ui.txtNumberSpace,
-  ui.sldNumberSpace,
-  ui.ckbIncludeZero,
+  ...ui.numbers,
   ui.rbTime,
   ui.sldTime,
   ui.txtTime,

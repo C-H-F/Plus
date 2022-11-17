@@ -19,12 +19,6 @@ body {
     margin-bottom: 10vh;
   }
 }
-#menu {
-  width: min(80%, 400px);
-  background: red;
-  box-sizing: border-box;
-  padding: 30px;
-}
 #numberSpaceDisplay > span {
   width: 10px;
   height: 10px;
@@ -89,14 +83,16 @@ body {
   flex-direction: column;
   align-content: center;
   align-items: center;
-  > button {color: green;}
+  > button {
+    color: green;
+  }
 }
 #app button {
-    font-size: 3em;
-    width: 4rem;
-    height: 4rem;
-    margin: 1rem;
-  }
+  font-size: 3em;
+  width: 4rem;
+  height: 4rem;
+  margin: 1rem;
+}
 
 #numpad {
   display: block;
@@ -107,4 +103,132 @@ body {
 }
 .incorrect {
   animation: 1s shake;
+}
+
+/* Menu */
+#menu {
+  position: relative;
+  width: min(80%, 400px);
+  background: white;
+  border-radius: 30px;
+
+  box-sizing: border-box;
+  padding: 30px;
+  padding-top: 80px;
+  box-shadow: 0px 0px 0px 3px red;
+}
+
+input[type='radio'] {
+  display: none;
+}
+input[type='radio'] + label + div {
+  display: none;
+}
+input[type='radio']:checked + label + div {
+  display: block;
+}
+
+#menu > input[type='radio']:checked + label::before {
+  opacity: 1;
+}
+
+#menu > label[for^='rb'] {
+  top: 0px;
+  width: calc(50% - 10px);
+  font-size: 12px;
+
+  position: absolute;
+  height: 60px;
+  text-align: center;
+  margin: 0px;
+  padding: 0px;
+  margin: 10px;
+  border-radius: 20px;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  padding: 5px;
+  box-sizing: border-box;
+}
+#menu > input[type='radio']:checked + label {
+  background: rgba(0, 0, 250, 0.25);
+}
+label[for='rbTime'] {
+  left: 0px;
+}
+label[for='rbAmount'] {
+  right: 0px;
+}
+
+/* #menu > label[for^='rb']::before {
+  content: '';
+  position: absolute;
+  margin-top: 15px;
+  width: calc(100%);
+  height: calc(100% - 30px);
+  display: block;
+  background-color: rgba(0, 0, 255, 0.25);
+  border-radius: 20px;
+  opacity: 0;
+  transition: opacity 1s;
+} */
+#menu > label[for^='rb']::after {
+  content: '';
+  width: calc(100%);
+  height: calc(100% - 30px);
+  display: inline-block;
+  position: absolute;
+  left: 0px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  top: 5px;
+}
+label[for='rbTime']::after {
+  background-image: url(/clock.svg);
+}
+
+label[for='rbAmount']::after {
+  background-image: url(/layer.svg);
+}
+
+#qr {
+  text-align: center;
+}
+
+input[type='radio'][name='start']:checked ~ label {
+  background-color: rgba(0, 0, 255, 0.25);
+}
+input[type='radio'][name='end']:checked ~ label {
+  background-color: transparent;
+}
+input[type='radio'][name='end']:checked + label {
+  background-color: rgba(0, 0, 255, 0.5);
+}
+
+input[type='radio'][name='start'] + label,
+input[type='radio'][name='end'] + label {
+  user-select: none;
+  display: inline-flex;
+  text-align: right;
+  width: 3ch;
+  height: 3ch;
+  justify-content: end;
+  align-items: center;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  padding: 3px;
+  box-sizing: border-box;
+}
+#rb100 + label {
+  padding: 0;
+}
+#submit {
+  margin-top: 1em;
+  font-size: 1.5em;
+  width: 100%;
+}
+#submit > img {
+  width: 1em;
+  margin-right: 1ch;
 }
