@@ -232,3 +232,56 @@ input[type='radio'][name='end'] + label {
   width: 1em;
   margin-right: 1ch;
 }
+
+/* Animation */
+@keyframes anim {
+  0% {
+    background-image: url(/robot.svg);
+    left: -30px;
+    bottom: 0px;
+  }
+  1% {
+    background-image: url(/robot.svg);
+    left: 0px;
+  }
+  20% {
+    background-image: url(/robot.svg);
+    left: 25%;
+  }
+  30% {
+    background-image: url(/robot.svg);
+    left: -30px;
+    bottom: 0px;
+  }
+  40% {
+    background-image: url(/rocket-ship.svg);
+    left: -30px;
+    bottom: -30px;
+  }
+  50% {
+    left: 0px;
+    bottom: 0px;
+  }
+  70% {
+    left: 0px;
+    bottom: 0px;
+  }
+  100% {
+    background-image: url(/rocket-ship.svg);
+    left: 10000px;
+    bottom: 10000px;
+  }
+}
+#menu::after {
+  content: '';
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  width: 30px;
+  height: 30px;
+  display: block;
+  animation-name: anim;
+  animation-duration: 60s;
+  animation-delay: 120s;
+  animation-iteration-count: infinite;
+}
