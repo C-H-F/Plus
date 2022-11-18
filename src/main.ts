@@ -188,9 +188,10 @@ function start() {
       if (correctValue == val) {
         gap.classList.remove('incorrect');
         currStat.endTime = new Date();
+        const errors = currStat.incorrect.length;
         stat.push(currStat);
         generateCalc();
-        {
+        if (!errors) {
           //Firework
           const amount = Math.random() * 5;
           makeFirework();
