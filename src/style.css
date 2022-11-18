@@ -103,6 +103,7 @@ body {
 }
 .incorrect {
   animation: 1s shake;
+  animation-iteration-count: 4;
 }
 
 /* Menu */
