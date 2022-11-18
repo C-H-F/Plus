@@ -89,7 +89,7 @@ body {
 }
 #app button {
   font-size: 3em;
-  width: 4rem;
+  min-width: 4rem;
   height: 4rem;
   margin: 1rem;
 }
