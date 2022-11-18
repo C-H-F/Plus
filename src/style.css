@@ -116,6 +116,7 @@ body {
   padding: 30px;
   padding-top: 80px;
   box-shadow: 0px 0px 0px 3px red;
+  margin: 50px;
 }
 
 input[type='radio'] {
@@ -284,4 +285,12 @@ input[type='radio'][name='end'] + label {
   animation-duration: 60s;
   animation-delay: 120s;
   animation-iteration-count: infinite;
+}
+.gh {
+  position: absolute;
+  text-align: center;
+  margin-top: 50px;
+  width: 100%;
+  left: 0px;
+  font-size: 0.75em;
 }
