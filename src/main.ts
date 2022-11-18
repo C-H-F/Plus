@@ -41,8 +41,6 @@ const ui = {
   numpad: document.querySelector<HTMLDivElement>('#numpad')!,
   progress: document.querySelector<HTMLProgressElement>('#app progress')!,
 };
-(ui.ckbMultiply.parentElement as HTMLDivElement).style.display = 'none';
-(ui.ckbDivide.parentElement as HTMLDivElement).style.display = 'none';
 
 function getRandomHex(rng: MersenneTwister | null = null): string {
   let rand = rng ? rng.random() : Math.random();
@@ -143,6 +141,18 @@ function start() {
         b = tmp;
       }
       c = a - b;
+    } else if (operator === Operator.Multiply || operator === Operator.Divide) {
+      a = generateRandom(min + 1, Math.floor(Math.sqrt(max)));
+      //const maxFactor = Math.floor(max / (a || 1));
+      //b = generateRandom(min + 1, maxFactor);
+      b = generateRandom(min + 1, Math.floor(Math.sqrt(max)));
+      c = a * b;
+      //if (generateRandom(0, 1) == 0) {
+      //  [a, b] = [b, a];
+      //}
+      if (operator === Operator.Divide) {
+        [a, c] = [c, a];
+      }
     } else {
       //(operator === Operator.Add) {
       c = generateRandom(min + 1, max); //there are at least 2 numbers
