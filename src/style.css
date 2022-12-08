@@ -69,8 +69,8 @@ body {
 #eq {
   display: inline-flex;
   font-size: 3em;
-  width: 5rem;
-  height: 5rem;
+  width: 2em;
+  height: 2em;
   align-items: center;
   justify-content: center;
 }
@@ -79,6 +79,7 @@ body {
   border-radius: 10%;
 }
 #app {
+  font-size: min(1em, 2vw);
   display: none;
   flex-direction: column;
   align-content: center;
@@ -89,9 +90,9 @@ body {
 }
 #app button {
   font-size: 3em;
-  min-width: 4rem;
-  height: 4rem;
-  margin: 1rem;
+  min-width: max(1.5em, 3rem);
+  height: max(1.5em, 3rem);
+  margin: 0.25em;
 }
 
 #numpad {
