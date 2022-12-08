@@ -19,10 +19,18 @@ const ui = {
   numbers: new Array(101)
     .fill(undefined)
     .map((_, i) => document.querySelector<HTMLInputElement>('#rb' + i)!),
-  ckbAdd: document.querySelector<HTMLInputElement>('#ckbAdd')!,
-  ckbSubtract: document.querySelector<HTMLInputElement>('#ckbSubtract')!,
-  ckbMultiply: document.querySelector<HTMLInputElement>('#ckbMultiply')!,
-  ckbDivide: document.querySelector<HTMLInputElement>('#ckbDivide')!,
+  ckbAddA: document.querySelector<HTMLInputElement>('#ckbAddA')!,
+  ckbAddB: document.querySelector<HTMLInputElement>('#ckbAddB')!,
+  ckbAddC: document.querySelector<HTMLInputElement>('#ckbAddC')!,
+  ckbSubtractA: document.querySelector<HTMLInputElement>('#ckbSubtractA')!,
+  ckbSubtractB: document.querySelector<HTMLInputElement>('#ckbSubtractB')!,
+  ckbSubtractC: document.querySelector<HTMLInputElement>('#ckbSubtractC')!,
+  ckbMultiplyA: document.querySelector<HTMLInputElement>('#ckbMultiplyA')!,
+  ckbMultiplyB: document.querySelector<HTMLInputElement>('#ckbMultiplyB')!,
+  ckbMultiplyC: document.querySelector<HTMLInputElement>('#ckbMultiplyC')!,
+  ckbDivideA: document.querySelector<HTMLInputElement>('#ckbDivideA')!,
+  ckbDivideB: document.querySelector<HTMLInputElement>('#ckbDivideB')!,
+  ckbDivideC: document.querySelector<HTMLInputElement>('#ckbDivideC')!,
   rbTime: document.querySelector<HTMLInputElement>('#rbTime')!,
   timeData: document.querySelector<HTMLDivElement>('#timeData')!,
   sldTime: document.querySelector<HTMLInputElement>('#sldTime')!,
@@ -81,12 +89,15 @@ function start() {
   let correctValue = 0;
   let gap: HTMLSpanElement = ui.a;
 
-  // let firstGuess = true;
-  //let solved = 0;
-  // let incorrectGuesses = 0;
-  // let distinctIncorrectGuesses = 0;
   const stat: Stat[] = [];
-  if (config.operators === Operator.None) config.operators = Operator.Add;
+  if (
+    config.gaps[Gap.A] === Operator.None &&
+    config.gaps[Gap.B] === Operator.None &&
+    config.gaps[Gap.C] === Operator.None
+  ) {
+    config.gaps[Gap.C] = Operator.Add;
+    config.gaps[Gap.C] = Operator.Subtract;
+  }
   const rng = new MersenneTwister(config.seed);
   const min = config.numberSpaceMin;
   const max = config.numberSpace + 1;
@@ -112,12 +123,17 @@ function start() {
   };
 
   const operatorCount = Math.log(Operator.INVALID) / Math.log(2);
-  const operators: Operator[] = [];
-  for (let i = 0; i < operatorCount; i++) {
-    const operator = Math.pow(2, i) as Operator;
-    if ((config.operators & operator) !== Operator.None)
-      operators.push(operator);
+  const calcTypes = [] as { operator: Operator; gap: Gap }[];
+  for (let gap = 0; gap < config.gaps.length; gap++) {
+    for (let i = 0; i < operatorCount; i++) {
+      const operator = (1 << i) as Operator;
+      if ((config.gaps[gap] & operator) == 0) continue;
+      calcTypes.push({ operator, gap });
+    }
   }
+  if (calcTypes.length === 0)
+    calcTypes.push({ operator: Operator.Add, gap: Gap.C });
+
   let currStat: Stat;
   const generateCalc = () => {
     document.querySelector<HTMLBodyElement>('body')!.style.backgroundColor =
@@ -125,11 +141,11 @@ function start() {
       Math.floor(Math.random() * 0x50 + 0x50).toString(16) +
       Math.floor(Math.random() * 0x50 + 0x50).toString(16) +
       Math.floor(Math.random() * 0x50 + 0x50).toString(16);
-    const operator = operators[generateRandom(0, operators.length)];
     let a = 0;
     let b = 0;
     let c = 0;
-    const hole = generateRandom(0, 3);
+    const { operator, gap: hole } =
+      calcTypes[generateRandom(0, calcTypes.length)];
     ui.op.innerText = '+';
 
     if (operator === Operator.Subtract) {
@@ -235,14 +251,21 @@ enum Operator {
   Divide = 8,
   INVALID = 16,
 }
+enum Gap {
+  A = 0,
+  B = 1,
+  C = 2,
+  MAX = 4,
+}
+
 type Config = {
   numberSpace: number;
   numberSpaceMin: number;
   mode: 'time' | 'amount';
   time: number;
   amount: number;
-  seed: number; //TODO
-  operators: Operator;
+  seed: number;
+  gaps: [Operator, Operator, Operator]; //Defines what gap can be used by which operator.
 };
 
 const config: Config = {
@@ -252,16 +275,44 @@ const config: Config = {
   amount: 10,
   time: 1,
   seed: new Date().getTime(),
-  operators: Operator.Add,
+  gaps: [Operator.None, Operator.None, Operator.Add | Operator.Subtract],
 };
 updateConfig();
 function finish(stat: Stat[]): void {
-  location.hash = '#';
   config.seed = new Date().getTime();
   console.log('DONE', stat);
+
+  ui.app.style.display = 'none';
+
+  const pre = document.createElement('pre');
+  pre.innerText = JSON.stringify(stat);
+  const div = document.createElement('div');
+  div.append(pre);
+  const button = document.createElement('button');
+  button.innerText = 'OK. New one!';
+  button.addEventListener('click', () => {
+    location.href = '#';
+    div.remove();
+  });
+  div.append(button);
+
+  document.body.append(div);
 }
 function updateConfig(input: HTMLInputElement | null = null) {
-  const uiOperators = [ui.ckbAdd, ui.ckbSubtract, ui.ckbMultiply, ui.ckbDivide];
+  const uiOperators = [
+    ui.ckbAddA,
+    ui.ckbAddB,
+    ui.ckbAddC,
+    ui.ckbSubtractA,
+    ui.ckbSubtractB,
+    ui.ckbSubtractC,
+    ui.ckbMultiplyA,
+    ui.ckbMultiplyB,
+    ui.ckbMultiplyC,
+    ui.ckbDivideA,
+    ui.ckbDivideB,
+    ui.ckbDivideC,
+  ] as HTMLInputElement[];
   if (input) {
     if ((input.checked && input.name === 'start') || input.name === 'end') {
       const number = ui.numbers.indexOf(input);
@@ -275,11 +326,14 @@ function updateConfig(input: HTMLInputElement | null = null) {
     else if ([ui.sldAmount, ui.txtAmount].indexOf(input) >= 0)
       config.amount = +input.value;
     else if (uiOperators.indexOf(input) >= 0) {
-      let operators = Operator.None;
-      for (let i = 0; i < uiOperators.length; i++) {
-        if (uiOperators[i].checked) operators |= Math.pow(2, i) as Operator;
+      for (let i = 0; i < Gap.MAX; i++) {
+        config.gaps[i] = Operator.None;
       }
-      config.operators = operators;
+      for (let i = 0; i < uiOperators.length; i++) {
+        const operatorIndex = Math.floor(i / 3);
+        const gapIndex = i % 3;
+        if (uiOperators[i].checked) config.gaps[gapIndex] |= 1 << operatorIndex;
+      }
     } else if (
       ui.rbTime === input &&
       input.value === 'time' &&
@@ -314,11 +368,16 @@ function updateConfig(input: HTMLInputElement | null = null) {
       (v.checked = i === config.numberSpaceMin || i === config.numberSpace)
   );
   for (let i = 0; i < uiOperators.length; i++) {
-    const op = uiOperators[i];
-    op.checked =
-      (config.operators & (Math.pow(2, i) as Operator)) != Operator.None;
+    const operatorIndex = Math.floor(i / 3);
+    const gapIndex = i % 3;
+    const gap = uiOperators[i];
+    gap.checked =
+      (config.gaps[gapIndex] & (1 << (operatorIndex as Operator))) !=
+      Operator.None;
   }
-  QRCode.toCanvas(ui.qr, getUrl());
+  const url = getUrl();
+  QRCode.toCanvas(ui.qr, url);
+  console.log(url);
 }
 function getUrl(): string {
   let url = '';
@@ -335,10 +394,18 @@ const menuInputs = [
   ui.rbAmount,
   ui.txtAmount,
   ui.sldAmount,
-  ui.ckbAdd,
-  ui.ckbSubtract,
-  ui.ckbDivide,
-  ui.ckbMultiply,
+  ui.ckbAddA,
+  ui.ckbAddB,
+  ui.ckbAddC,
+  ui.ckbSubtractA,
+  ui.ckbSubtractB,
+  ui.ckbSubtractC,
+  ui.ckbDivideA,
+  ui.ckbDivideB,
+  ui.ckbDivideC,
+  ui.ckbMultiplyA,
+  ui.ckbMultiplyB,
+  ui.ckbMultiplyC,
 ];
 for (const input of menuInputs) {
   const listener = () => {
