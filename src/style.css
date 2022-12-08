@@ -295,3 +295,13 @@ input[type='radio'][name='end'] + label {
   left: 0px;
   font-size: 0.75em;
 }
+
+#btnBack {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  text-decoration: none;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.25);
+  padding: 0.25rem;
+}
