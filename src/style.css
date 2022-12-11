@@ -110,7 +110,7 @@ body {
 /* Menu */
 #menu {
   position: relative;
-  width: min(80%, 400px);
+  width: min(80%, 425px);
   background: white;
   border-radius: 30px;
 
