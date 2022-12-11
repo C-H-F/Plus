@@ -297,12 +297,134 @@ function finish(stat: Stat[]): void {
 
   ui.app.style.display = 'none';
 
-  const pre = document.createElement('pre');
-  pre.innerText = JSON.stringify(stat);
+  let errors = 0;
+  let correctCalculations = 0;
+  let duration = 0;
+  for (const entry of stat) {
+    const currErrors = entry.incorrect.length;
+    errors += currErrors;
+    if (currErrors == 0) correctCalculations++;
+  }
+  if (stat.length > 0)
+    duration =
+      (new Date(
+        stat[stat.length - 1].endTime ?? stat[stat.length - 1].startTime
+      ).getTime() -
+        new Date(stat[0].startTime).getTime()) /
+      1000;
+
   const div = document.createElement('div');
-  div.append(pre);
+  div.classList.add('statistics');
+  {
+    const elem = document.createElement('a');
+    elem.id = 'btnBack';
+    elem.innerText = `<`;
+    elem.addEventListener('click', (evt) => {
+      evt.preventDefault();
+      div.remove();
+      location.href = '#';
+    });
+    elem.href = '#';
+    div.append(elem);
+  }
+  {
+    const pick = (arg: string[]) => {
+      return arg[Math.floor(Math.random() * arg.length)];
+    };
+    const r = correctCalculations / stat.length;
+    const elem = document.createElement('p');
+    elem.className = 'grade';
+    if (r > 0.91) {
+      elem.innerText = pick(['😀', '🤩', '😎']);
+      elem.title = '1';
+    } else if (r > 0.81) {
+      elem.innerText = pick(['😉', '😊', '🙂']);
+      elem.title = '2';
+    } else if (r > 0.66) {
+      elem.innerText = '🤨';
+      elem.title = '3';
+    } else if (r > 0.5) {
+      elem.innerText = '😟';
+      elem.title = '4';
+    } else {
+      elem.innerText = '😭';
+      elem.title = '5';
+    }
+    div.append(elem);
+  }
+  {
+    const elem = document.createElement('p');
+    elem.innerText = `✅: ${correctCalculations} / ${stat.length}`;
+    div.append(elem);
+  }
+  {
+    const elem = document.createElement('p');
+    elem.innerText = `❌: ${errors}`;
+    div.append(elem);
+  }
+  {
+    const elem = document.createElement('p');
+    elem.innerText = `⏱: ~${
+      Math.round((duration / (stat.length || 1)) * 10) / 10
+    } seconds per calculation`;
+    div.append(elem);
+  }
+  for (const calc of stat) {
+    const elem = document.createElement('div');
+    const h2 = document.createElement('h2');
+    {
+      const span = document.createElement('span');
+      if (calc.hole == Gap.A) span.className = 'gap';
+      span.innerText = ' ' + calc.a + ' ';
+      h2.append(span);
+    }
+    {
+      const span = document.createElement('span');
+      span.innerText = ' ' + toOperatorSign(calc.operator) + ' ';
+      h2.append(span);
+    }
+    {
+      const span = document.createElement('span');
+      if (calc.hole == Gap.B) span.className = 'gap';
+      span.innerText = ' ' + calc.b + ' ';
+      h2.append(span);
+    }
+    {
+      const span = document.createElement('span');
+      span.innerText = ' = ';
+      h2.append(span);
+    }
+    {
+      const span = document.createElement('span');
+      if (calc.hole == Gap.C) span.className = 'gap';
+      span.innerText = ' ' + calc.c + ' ';
+      h2.append(span);
+    }
+    {
+      const span = document.createElement('span');
+      span.className = 'succ';
+      span.innerText = calc.incorrect.length == 0 ? ' ✔' : ' ❌';
+      h2.append(span);
+    }
+    div.append(h2);
+    if (calc.endTime) {
+      const elem = document.createElement('p');
+      elem.innerText = `${
+        Math.round((calc.endTime.getTime() - calc.startTime.getTime()) / 100) /
+        10
+      }s`;
+      div.append(elem);
+    }
+    if (calc.incorrect.length > 0) {
+      const elem = document.createElement('p');
+      elem.innerText = 'Incorrect values: ' + calc.incorrect.join(', ');
+      div.append(elem);
+    }
+    div.append(elem);
+  }
   const button = document.createElement('button');
-  button.innerText = 'OK. New one!';
+  button.innerText = 'OK';
+  button.className = 'ok';
   button.addEventListener('click', () => {
     location.href = '#';
     div.remove();

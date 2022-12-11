@@ -306,3 +306,30 @@ input[type='radio'][name='end'] + label {
   color: rgba(255, 255, 255, 0.25);
   padding: 0.25rem;
 }
+
+.statistics {
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+  text-align: center;
+}
+
+.statistics > p.grade {
+  font-size: 5em;
+}
+.statistics .gap {
+  background: white;
+  border-radius: 3px;
+  padding: 0.25em;
+}
+.statistics h2 {
+  font-size: 1em;
+  padding-top: 1.5em;
+}
+.statistics h2 .succ {
+  margin-left: 1ch;
+  margin-right: 1ch;
+}
+.ok {
+  margin: 3em;
+}
