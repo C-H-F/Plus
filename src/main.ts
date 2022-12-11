@@ -280,7 +280,7 @@ type Config = {
 const config: Config = {
   numberSpace: 10,
   numberSpaceMin: 0,
-  mode: 'time',
+  mode: 'amount',
   amount: 10,
   time: 1,
   seed: new Date().getTime(),
