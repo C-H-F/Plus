@@ -19,6 +19,7 @@ const ui = {
   numbers: new Array(101)
     .fill(undefined)
     .map((_, i) => document.querySelector<HTMLInputElement>('#rb' + i)!),
+  btnBack: document.querySelector<HTMLAnchorElement>('#btnBack')!,
   ckbAddA: document.querySelector<HTMLInputElement>('#ckbAddA')!,
   ckbAddB: document.querySelector<HTMLInputElement>('#ckbAddB')!,
   ckbAddC: document.querySelector<HTMLInputElement>('#ckbAddC')!,
@@ -48,6 +49,15 @@ const ui = {
   qr: document.querySelector<HTMLCanvasElement>('#qr > canvas')!,
   numpad: document.querySelector<HTMLDivElement>('#numpad')!,
   progress: document.querySelector<HTMLProgressElement>('#app progress')!,
+};
+ui.btnBack.onclick = (evt) => {
+  if (!confirm('Do you really want to go back to main menu?')) {
+    evt.preventDefault();
+    return false;
+  }
+  cleanup();
+  location.href = '#';
+  return true;
 };
 
 function getRandomHex(rng: MersenneTwister | null = null): string {
@@ -111,8 +121,7 @@ function start() {
     interval = window.setInterval(() => {
       ui.progress.value++;
       if (ui.progress.value == ui.progress.max) {
-        clearInterval(interval);
-        interval = 0;
+        cleanup();
         finish(stat);
       }
     }, 1000);
@@ -278,6 +287,10 @@ const config: Config = {
   gaps: [Operator.None, Operator.None, Operator.Add | Operator.Subtract],
 };
 updateConfig();
+function cleanup() {
+  clearInterval(interval);
+  interval = 0;
+}
 function finish(stat: Stat[]): void {
   config.seed = new Date().getTime();
   console.log('DONE', stat);
