@@ -167,14 +167,9 @@ function start() {
       }
       c = a - b;
     } else if (operator === Operator.Multiply || operator === Operator.Divide) {
-      a = generateRandom(min + 1, Math.floor(Math.sqrt(max)));
-      //const maxFactor = Math.floor(max / (a || 1));
-      //b = generateRandom(min + 1, maxFactor);
-      b = generateRandom(min + 1, Math.floor(Math.sqrt(max)));
+      a = generateRandom(min, Math.floor(Math.sqrt(max)) + 1);
+      b = generateRandom(min, Math.floor(Math.sqrt(max)) + 1);
       c = a * b;
-      //if (generateRandom(0, 1) == 0) {
-      //  [a, b] = [b, a];
-      //}
       if (operator === Operator.Divide) {
         [a, c] = [c, a];
       }
