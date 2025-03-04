@@ -3,6 +3,8 @@ import QRCode from 'qrcode';
 import MersenneTwister from 'mersenne-twister';
 import fireworks from 'fireworks';
 
+history.scrollRestoration = 'manual';
+
 type Stat = {
   a: number;
   b: number;
